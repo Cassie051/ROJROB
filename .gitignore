@@ -131,4 +131,5 @@ dmypy.json
 # Code
 .vscode/
 
-.idea
+.idea/
+.qt_for_python/
