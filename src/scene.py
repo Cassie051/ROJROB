@@ -7,6 +7,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from robot import Robot
 from map import Map
+from random import randrange
 
 matplotlib.use("Qt5Agg")
 
@@ -40,7 +41,12 @@ class Scene(QtWidgets.QMainWindow):
         rec = matplotlib.pyplot.Circle(
             [robot.get_position()[0] + 0.5, robot.get_position()[1] + 0.5], 0.5
         )
-        rec.set(color=robot.get_color())
+        color = robot.get_color()
+        if robot.get_status() == "Free":
+            color = 'g'
+        elif robot.get_status() == "Busy":
+            color = 'r'
+        rec.set(color=color)
         self.sc.axes.add_artist(rec)
 
     def plot_path(self, path, color="r-"):
@@ -55,12 +61,14 @@ class Scene(QtWidgets.QMainWindow):
         i = 0
         for robot in self.robots:
             robot.find_path(self.aim[i])
+            robot.set_status("Busy")
             i += 1
 
     def plot(self):
         for robot in self.robots:
             self.plot_robot(robot)
-            self.plot_path(robot.get_path(), robot.get_color() + "-")
+            if len(robot.get_path()) > 1:
+                self.plot_path(robot.get_path(), robot.get_color() + "-")
 
     def set_up_plot(self):
         major_ticks = np.arange(0, self.map.x+1, 1)
@@ -79,20 +87,17 @@ class Scene(QtWidgets.QMainWindow):
     def update_plot(self):
         self.sc.axes.cla()  # Clear the canvas.
         for robot in self.robots:
-            if len(robot.get_path()) > 1:
-                self.plot_robot(robot)
-                robot.set_position(robot.get_path()[1])
-                robot_path = robot.get_path()
+            robot.make_step()
+            robot_path = robot.get_path()
+            if len(robot_path) > 1:
                 self.plot_path(robot_path, robot.get_color() + "-")
-                del robot_path[0]
-                robot.set_path(robot_path)
-            elif len(robot.get_path()) == 1:
-                self.plot_robot(robot)
-                robot_path = robot.get_path()
-                del robot_path[0]
-                robot.set_path(robot_path)
-            else:
-                self.plot_robot(self.sc, robot)
+            elif len(robot_path) < 2:
+                robot.set_status("Free")
+            self.plot_robot(robot)
+            if robot.get_status() == "Free":
+                new_x, new_y = randrange(20), randrange(20)
+                robot.find_path((new_x, new_y))
+                robot.set_status("Busy")
         self.set_up_plot()
         self.sc.draw()
 
