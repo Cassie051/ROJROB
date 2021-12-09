@@ -13,6 +13,13 @@ class Robot:
         self.path = []
         self.color = color
 
+    def make_step(self):
+        if len(self.path) > 1:
+            self.position = self.path[1]
+            del self.path[0]
+        elif len(self.path) == 1:
+            del self.path[0]
+
     def find_path(self, goal):
         self.path = Astar().solve(self.position, goal)
 
@@ -37,6 +44,12 @@ class Robot:
 
     def set_position(self, pos):
         self.position = pos
+
+    def set_status(self, stat):
+        self.status = stat
+
+    def get_status(self):
+        return self.status
 
 
 if __name__ == "__main__":
