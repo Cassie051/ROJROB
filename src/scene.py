@@ -6,6 +6,7 @@ from ui.main_window import UiRojRob
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from robot import Robot
+from map import Map
 
 matplotlib.use("Qt5Agg")
 
@@ -15,15 +16,25 @@ class MplCanvas(FigureCanvasQTAgg):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
         super(MplCanvas, self).__init__(fig)
-        self.timer = QtCore.QTimer()
 
 
 class Scene(QtWidgets.QMainWindow):
     def __init__(self):
+        super(Scene, self).__init__()
         self.ui = UiRojRob()
-        self.sc = MplCanvas(self, width=10, height=10, dpi=100)
-        self.robots = [Robot([1, 0], "b"), Robot([0, 1], "g")]
-        self.aim = [[9, 8], [8, 9]]
+        self.map = Map(20, 20)
+        self.sc = MplCanvas(self, width=self.map.x, height=self.map.y, dpi=100)
+        self.start_possition = [[1, 0], [0, 1]]
+        self.robots = [
+            Robot(self.start_possition[0], "b"),
+            Robot(self.start_possition[1], "g"),
+        ]
+        self.aim = [[19, 6], [8, 19]]
+        self.timer = QtCore.QTimer()
+        self.init_robots()
+        self.set_up_plot()
+        self.plot()
+        self.set_up_timer()
 
     def plot_robot(self, robot):
         rec = matplotlib.pyplot.Circle(
@@ -46,13 +57,14 @@ class Scene(QtWidgets.QMainWindow):
             robot.find_path(self.aim[i])
             i += 1
 
-    def plot(self, robot):
-        self.plot_robot(robot)
-        self.plot_path(robot.get_path(), robot.get_color() + "-")
+    def plot(self):
+        for robot in self.robots:
+            self.plot_robot(robot)
+            self.plot_path(robot.get_path(), robot.get_color() + "-")
 
     def set_up_plot(self):
-        major_ticks = np.arange(0, 11, 1)
-        self.sc.axes.axis([0, 10, 0, 10])
+        major_ticks = np.arange(0, self.map.x+1, 1)
+        self.sc.axes.axis([0, self.map.x, 0, self.map.y])
         self.sc.axes.set_xticks(major_ticks)
         self.sc.axes.set_yticks(major_ticks)
         self.sc.axes.grid("both")
@@ -68,14 +80,14 @@ class Scene(QtWidgets.QMainWindow):
         self.sc.axes.cla()  # Clear the canvas.
         for robot in self.robots:
             if len(robot.get_path()) > 1:
-                self.plot_robot(self.sc, robot)
+                self.plot_robot(robot)
                 robot.set_position(robot.get_path()[1])
                 robot_path = robot.get_path()
-                self.plot_path(self.sc, robot_path, robot.get_color() + "-")
+                self.plot_path(robot_path, robot.get_color() + "-")
                 del robot_path[0]
                 robot.set_path(robot_path)
             elif len(robot.get_path()) == 1:
-                self.plot_robot(self.sc, robot)
+                self.plot_robot(robot)
                 robot_path = robot.get_path()
                 del robot_path[0]
                 robot.set_path(robot_path)
@@ -87,6 +99,6 @@ class Scene(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    main = Scene()
-    main.show()
+    scene = Scene()
+    scene.show()
     sys.exit(app.exec_())
