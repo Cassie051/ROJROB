@@ -25,12 +25,13 @@ class Scene(QtWidgets.QMainWindow):
         self.ui = UiRojRob()
         self.map = Map(20, 20)
         self.sc = MplCanvas(self, width=self.map.x, height=self.map.y, dpi=100)
-        self.start_possition = [[1, 0], [0, 1]]
+        self.start_possition = [[1, 0], [0, 1], [2,0]]
         self.robots = [
             Robot(self.start_possition[0], "b"),
             Robot(self.start_possition[1], "g"),
+            Robot(self.start_possition[2], "b"),
         ]
-        self.aim = [[19, 6], [8, 19]]
+        self.aim = [[19, 6], [8, 19], [13, 9],]
         self.timer = QtCore.QTimer()
         self.init_robots()
         self.set_up_plot()
