@@ -6,7 +6,7 @@ from ui.main_window import UiRojRob
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from random import randrange
-from menager import Menager
+from system.menager import Menager
 
 matplotlib.use("Qt5Agg")
 

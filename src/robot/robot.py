@@ -1,4 +1,4 @@
-from astar import Astar
+from robot.astar import Astar
 
 
 class Robot:

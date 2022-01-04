@@ -1,6 +1,6 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-from scene import Scene
+from scene.scene import Scene
 
 
 def main():

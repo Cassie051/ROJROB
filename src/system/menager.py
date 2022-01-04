@@ -1,6 +1,6 @@
-from robot import Robot
+from robot.robot import Robot
 import random
-from map import Map
+from scene.map import Map
 
 
 class Menager:
