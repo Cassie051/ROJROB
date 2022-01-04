@@ -5,9 +5,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.main_window import UiRojRob
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from robot import Robot
-from map import Map
 from random import randrange
+from menager import Menager
 
 matplotlib.use("Qt5Agg")
 
@@ -23,18 +22,11 @@ class Scene(QtWidgets.QMainWindow):
     def __init__(self):
         super(Scene, self).__init__()
         self.ui = UiRojRob()
-        self.map = Map(20, 20)
+        self.menager = Menager(3)
+        self.robots = self.menager.robots
+        self.map = self.menager.map
         self.sc = MplCanvas(self, width=self.map.x, height=self.map.y, dpi=100)
-        self.start_possition = [[1, 0], [0, 1], [2,0]]
-        self.robots = [
-            Robot(self.start_possition[0], "b"),
-            Robot(self.start_possition[1], "g"),
-            Robot(self.start_possition[2], "b"),
-        ]
-        self.aim = [[19, 6], [8, 19], [13, 9]]
         self.timer = QtCore.QTimer()
-        self.init_map()
-        self.init_robots()
         self.set_up_plot()
         self.plot()
         self.set_up_timer()
@@ -85,16 +77,6 @@ class Scene(QtWidgets.QMainWindow):
         self.sc.axes.grid("both")
         self.sc.axes.set_aspect("equal")
         self.setCentralWidget(self.sc)
-
-    def init_robots(self):
-        i = 0
-        for robot in self.robots:
-            robot.find_path(self.aim[i])
-            robot.set_status("Busy")
-            i += 1
-
-    def init_map(self):
-        self.map.generate_map()
 
     def set_up_timer(self):
         self.timer.setInterval(1000)

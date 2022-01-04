@@ -1,5 +1,5 @@
-import random
 import numpy as np
+
 
 class Map:
     def __init__(self, x, y):
@@ -29,6 +29,7 @@ class Map:
 
     def print_map(self):
         print(self.grid)
+
 
 if __name__ == "__main__":
     map = Map(20, 20)
