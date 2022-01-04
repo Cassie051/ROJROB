@@ -31,7 +31,7 @@ class Scene(QtWidgets.QMainWindow):
             Robot(self.start_possition[1], "g"),
             Robot(self.start_possition[2], "b"),
         ]
-        self.aim = [[19, 6], [8, 19], [13, 9],]
+        self.aim = [[19, 6], [8, 19], [13, 9]]
         self.timer = QtCore.QTimer()
         self.init_map()
         self.init_robots()
