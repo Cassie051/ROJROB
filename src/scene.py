@@ -33,6 +33,7 @@ class Scene(QtWidgets.QMainWindow):
         ]
         self.aim = [[19, 6], [8, 19], [13, 9],]
         self.timer = QtCore.QTimer()
+        self.init_map()
         self.init_robots()
         self.set_up_plot()
         self.plot()
@@ -50,6 +51,17 @@ class Scene(QtWidgets.QMainWindow):
         rec.set(color=color)
         self.sc.axes.add_artist(rec)
 
+    def plot_obstacles(self):
+        obstacles_xy = self.map.occupated_points()
+        for obstacle_xy in obstacles_xy:
+            rec = matplotlib.pyplot.Rectangle(
+                [obstacle_xy[0] - 1, obstacle_xy[1] - 1], 1, 1
+            )
+            color = 'black'
+            rec.set(color=color)
+            rec.set(fill=True)
+            self.sc.axes.add_artist(rec)
+
     def plot_path(self, path, color="r-"):
         x = []
         y = []
@@ -58,14 +70,8 @@ class Scene(QtWidgets.QMainWindow):
             y.append(point[1] + 0.5)
         self.sc.axes.plot(x, y, color)
 
-    def init_robots(self):
-        i = 0
-        for robot in self.robots:
-            robot.find_path(self.aim[i])
-            robot.set_status("Busy")
-            i += 1
-
     def plot(self):
+        self.plot_obstacles()
         for robot in self.robots:
             self.plot_robot(robot)
             if len(robot.get_path()) > 1:
@@ -80,6 +86,16 @@ class Scene(QtWidgets.QMainWindow):
         self.sc.axes.set_aspect("equal")
         self.setCentralWidget(self.sc)
 
+    def init_robots(self):
+        i = 0
+        for robot in self.robots:
+            robot.find_path(self.aim[i])
+            robot.set_status("Busy")
+            i += 1
+
+    def init_map(self):
+        self.map.generate_map()
+
     def set_up_timer(self):
         self.timer.setInterval(1000)
         self.timer.timeout.connect(self.update_plot)
@@ -87,6 +103,7 @@ class Scene(QtWidgets.QMainWindow):
 
     def update_plot(self):
         self.sc.axes.cla()  # Clear the canvas.
+        self.plot_obstacles()
         for robot in self.robots:
             robot.make_step()
             robot_path = robot.get_path()
