@@ -29,8 +29,8 @@ class Menager:
 
     def generate_start_possition(self):
         while len(self.start_possition) < self.robot_number:
-            rand_x = random.randint(0, self.map_dimentions[0])
-            rand_y = random.randint(0, self.map_dimentions[1])
+            rand_x = random.randint(0, self.map_dimentions[0] - 1)
+            rand_y = random.randint(0, self.map_dimentions[1] - 1)
             if any(x == rand_x for (x, _) in self.start_possition) and any(
                 y == rand_y for (_, y) in self.start_possition
             ):
@@ -40,8 +40,8 @@ class Menager:
 
     def generate_aim(self):
         while len(self.aim) < self.robot_number:
-            rand_x = random.randint(0, self.map_dimentions[0])
-            rand_y = random.randint(0, self.map_dimentions[1])
+            rand_x = random.randint(0, self.map_dimentions[0] - 1)
+            rand_y = random.randint(0, self.map_dimentions[1] - 1)
             if any(x == rand_x for (x, _) in self.start_possition) and any(
                 y == rand_y for (_, y) in self.start_possition
             ):
