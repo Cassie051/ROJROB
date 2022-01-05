@@ -20,8 +20,8 @@ class Robot:
         elif len(self.path) == 1:
             del self.path[0]
 
-    def find_path(self, goal):
-        self.path = Astar().solve(self.position, goal)
+    def find_path(self, goal, occupancy_map):
+        self.path = Astar().solve(self.position, goal, occupancy_map)
 
     def print_path(self):
         for point in self.path:

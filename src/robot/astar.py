@@ -30,7 +30,7 @@ class Astar:
     def __init__(self):
         self.states_ = []
 
-    def solve(self, start, goal):
+    def solve(self, start, goal, occupancy_map):
         solution = None
         start_state = start
         goal_state = goal
@@ -69,6 +69,12 @@ class Astar:
                 node_position[0], node_position[1] = current_node_x + new_position[0], current_node_y + new_position[1]
 
                 # TODO: check if node is reachable
+                if 0 > node_position[0] or node_position[0] > occupancy_map.get_x_size()-1:
+                    continue
+                if 0 > node_position[1] or node_position[1] > occupancy_map.get_y_size()-1:
+                    continue
+                if occupancy_map.is_occupacy(node_position[0], node_position[1]):
+                    continue
                 new_node = Node(current_node, node_position)
                 children.append(new_node)
 
@@ -83,7 +89,7 @@ class Astar:
                 heapq.heappush(open_list, child)
 
         if not solution:
-            return None
+            return []
         else:
             path = [start]
             for s in self.states_[:solution]:

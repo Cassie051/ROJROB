@@ -8,6 +8,7 @@ class Menager:
         self.robot_number = robot_number
         self.map_dimentions = 20, 20
         self.map = Map(self.map_dimentions[0], self.map_dimentions[1])
+        self.init_map()
         self.robots = []
         self.start_possition = []
         self.aim = []
@@ -15,12 +16,14 @@ class Menager:
         self.generate_aim()
         self.generate_robots()
         self.init_robots()
-        self.init_map()
 
     def init_robots(self):
         i = 0
+        colors = ['m', 'y', 'g', 'r']
         for robot in self.robots:
-            robot.find_path(self.aim[i])
+            if i < len(colors):
+                robot.set_color(colors[i])
+            robot.find_path(self.aim[i], self.map)
             robot.set_status("Busy")
             i += 1
 
@@ -32,7 +35,7 @@ class Menager:
             rand_x = random.randint(0, self.map_dimentions[0] - 1)
             rand_y = random.randint(0, self.map_dimentions[1] - 1)
             if any(x == rand_x for (x, _) in self.start_possition) and any(
-                y == rand_y for (_, y) in self.start_possition
+                    y == rand_y for (_, y) in self.start_possition
             ):
                 pass
             else:
@@ -43,12 +46,15 @@ class Menager:
             rand_x = random.randint(0, self.map_dimentions[0] - 1)
             rand_y = random.randint(0, self.map_dimentions[1] - 1)
             if any(x == rand_x for (x, _) in self.start_possition) and any(
-                y == rand_y for (_, y) in self.start_possition
+                    y == rand_y for (_, y) in self.start_possition
             ):
                 pass
             elif any(x == rand_x for (x, _) in self.aim) and any(
-                y == rand_y for (_, y) in self.aim
+                    y == rand_y for (_, y) in self.aim
             ):
+                pass
+            elif any(x == rand_x for (x, _) in self.map.occupated_points()) and any(
+                    y == rand_y for (_, y) in self.map.occupated_points()):
                 pass
             else:
                 self.aim.append([rand_x, rand_y])

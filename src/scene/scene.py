@@ -32,7 +32,10 @@ class Scene(QtWidgets.QMainWindow):
         self.set_up_timer()
 
     def plot_robot(self, robot):
-        rec = matplotlib.pyplot.Circle(
+        rob = matplotlib.pyplot.Circle(
+            [robot.get_position()[0] + 0.5, robot.get_position()[1] + 0.5], 0.3
+        )
+        status_circle = matplotlib.pyplot.Circle(
             [robot.get_position()[0] + 0.5, robot.get_position()[1] + 0.5], 0.5
         )
         color = robot.get_color()
@@ -40,14 +43,16 @@ class Scene(QtWidgets.QMainWindow):
             color = 'g'
         elif robot.get_status() == "Busy":
             color = 'r'
-        rec.set(color=color)
-        self.sc.axes.add_artist(rec)
+        rob.set(color=robot.get_color())
+        status_circle.set(color=color)
+        self.sc.axes.add_artist(status_circle)
+        self.sc.axes.add_artist(rob)
 
     def plot_obstacles(self):
         obstacles_xy = self.map.occupated_points()
         for obstacle_xy in obstacles_xy:
             rec = matplotlib.pyplot.Rectangle(
-                [obstacle_xy[0] - 1, obstacle_xy[1] - 1], 1, 1
+                [obstacle_xy[0], obstacle_xy[1]], 1, 1
             )
             color = 'black'
             rec.set(color=color)
@@ -96,7 +101,7 @@ class Scene(QtWidgets.QMainWindow):
             self.plot_robot(robot)
             if robot.get_status() == "Free":
                 new_x, new_y = randrange(20), randrange(20)
-                robot.find_path((new_x, new_y))
+                robot.find_path((new_x, new_y), self.map)
                 robot.set_status("Busy")
         self.set_up_plot()
         self.sc.draw()

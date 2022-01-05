@@ -7,6 +7,12 @@ class Map:
         self.x = x
         self.y = y
 
+    def get_x_size(self):
+        return self.x
+
+    def get_y_size(self):
+        return self.y
+
     def is_occupacy(self, x, y):
         if self.grid[x][y] == 0:
             return False
