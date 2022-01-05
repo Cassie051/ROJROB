@@ -88,22 +88,25 @@ class Scene(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.update_plot)
         self.timer.start()
 
-    def update_plot(self):
-        self.sc.axes.cla()  # Clear the canvas.
-        self.plot_obstacles()
+    def check_status(self):
+        i = 0
         for robot in self.robots:
             robot.make_step()
             robot_path = robot.get_path()
             if len(robot_path) > 1:
                 self.plot_path(robot_path, robot.get_color() + "-")
             elif len(robot_path) < 2:
-                robot.set_status("Free")
+                self.menager.set_robot_status(i, "Free")
             self.plot_robot(robot)
             if robot.get_status() == "Free":
-                new_x, new_y = randrange(20), randrange(20)
-                robot.find_path((new_x, new_y), self.map)
-                robot.set_status("Busy")
+                self.menager.set_robot_status(i, "Busy")
+            i += 1
         self.set_up_plot()
+
+    def update_plot(self):
+        self.sc.axes.cla()  # Clear the canvas.
+        self.plot_obstacles()
+        self.check_status()
         self.sc.draw()
 
 

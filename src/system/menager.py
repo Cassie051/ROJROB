@@ -11,11 +11,11 @@ class Menager:
         self.init_map()
         self.robots = []
         self.start_possition = []
-        self.aim = []
         self.generate_start_possition()
         self.generate_aim()
         self.generate_robots()
         self.init_robots()
+        self.print_world_info()
 
     def init_robots(self):
         i = 0
@@ -42,6 +42,7 @@ class Menager:
                 self.start_possition.append([rand_x, rand_y])
 
     def generate_aim(self):
+        self.aim = []
         while len(self.aim) < self.robot_number:
             rand_x = random.randint(0, self.map_dimentions[0] - 1)
             rand_y = random.randint(0, self.map_dimentions[1] - 1)
@@ -59,6 +60,41 @@ class Menager:
             else:
                 self.aim.append([rand_x, rand_y])
 
+    def generate_single_aim(self, robot_number):
+        rand_x = random.randint(0, self.map_dimentions[0] - 1)
+        rand_y = random.randint(0, self.map_dimentions[1] - 1)
+        self.aim[robot_number] = [rand_x, rand_y]
+        return rand_x, rand_y
+
     def generate_robots(self):
         for i in range(self.robot_number):
             self.robots.append(Robot(self.start_possition[i], "b"))
+
+    def set_robot_status(self, robot_number, status):
+        if status == "Busy":
+            new_x, new_y = self.generate_single_aim(robot_number)
+            self.robots[robot_number].find_path((new_x, new_y), self.map)
+            self.robots[robot_number].set_status(status)
+            self.print_robot_status(robot_number)
+            print('------------------------')
+        else:
+            self.robots[robot_number].set_status(status)
+            self.print_robot_status(robot_number)
+
+    def print_world_info(self):
+        print('Map size: ', self.map_dimentions)
+        print('Number of robots: ', self.robot_number)
+        print('------------------------')
+        i = 0
+        for robot in self.robots:
+            print('Robot', i+1)
+            print('Starting possition:', self.start_possition[i])
+            print('Aim:', self.aim[i])
+            print('Robot status:', robot.get_status())
+            i += 1
+        print('------------------------')
+
+    def print_robot_status(self, i):
+        print('Robot', i+1)
+        print('Aim:', self.aim[i])
+        print('Robot status:', self.robots[i].get_status())
