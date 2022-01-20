@@ -5,6 +5,7 @@ from scene.map import Map
 
 class Menager:
     def __init__(self, robot_number):
+        self.load_params()
         self.robot_number = robot_number
         self.map_dimentions = 20, 20
         self.map = Map(self.map_dimentions[0], self.map_dimentions[1])
