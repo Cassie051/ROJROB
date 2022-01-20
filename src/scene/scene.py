@@ -43,6 +43,8 @@ class Scene(QtWidgets.QMainWindow):
             color = 'g'
         elif robot.get_status() == "Busy":
             color = 'r'
+        elif robot.get_status() == "Halt":
+            color = 'k'
         rob.set(color=robot.get_color())
         status_circle.set(color=color)
         self.sc.axes.add_artist(status_circle)
@@ -91,8 +93,10 @@ class Scene(QtWidgets.QMainWindow):
     def update_plot(self):
         self.sc.axes.cla()  # Clear the canvas.
         self.plot_obstacles()
+        self.menager.check_collisions()
         for robot in self.robots:
-            robot.make_step()
+            if robot.get_status() != "Halt":
+                robot.make_step()
             robot_path = robot.get_path()
             if len(robot_path) > 1:
                 self.plot_path(robot_path, robot.get_color() + "-")
