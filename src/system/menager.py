@@ -1,15 +1,14 @@
-from robot.robot import Robot
 import random
+import json
+from robot.robot import Robot
 from scene.map import Map
 
 
 class Menager:
     def __init__(self, robot_number):
-        self.load_params()
-        self.robot_number = robot_number
-        self.map_dimentions = 20, 20
-        self.map = Map(self.map_dimentions[0], self.map_dimentions[1])
-        self.init_map()
+        self.robot_number = 0
+        self.map_dimentions = 0, 0
+        self.load_params('../config/scenario_1.json')
         self.robots = []
         self.start_possition = []
         self.generate_start_possition()
@@ -17,6 +16,18 @@ class Menager:
         self.generate_robots()
         self.init_robots()
         self.print_world_info()
+
+    def load_params(self, file_name):
+        f = open(file_name)
+        data = json.load(f)
+        self.robot_number = data["robot"]["number"]
+        dimensions = data["map"]["dimensions"]
+        self.map_dimentions = dimensions["x"], dimensions["y"]
+        self.map = Map(self.map_dimentions[0], self.map_dimentions[1])
+        if(data["map"]["rand"]):
+            self.map.load_map(data["map"]["grid"])
+        else:
+            self.init_map()
 
     def init_robots(self):
         i = 0

@@ -33,6 +33,11 @@ class Map:
             rand = np.random.choice(arr_01, self.y, p=[0.9, 0.1])
             self.grid[i] = rand
 
+    def load_map(self, grid):
+        i=0
+        for line in grid:
+            self.grid[i] = np.array(line)
+            i += 1
     def print_map(self):
         print(self.grid)
 
