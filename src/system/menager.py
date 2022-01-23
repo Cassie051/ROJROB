@@ -77,14 +77,8 @@ class Menager:
             i = 0
             for point in robot_path:
                 if point in another_robot_path:
-                    j = 0
-                    for second_point in another_robot_path:
-                        if second_point  in robot_path:
-                            break
-                        j += 1
                     # print("Collision with ", another_robot.get_color(), " in ", i, "steps!", " Point: ", point)
-                    # print(another_robot.get_color(), "has ", j ,"steps to collision!")
-                    return True, another_robot.get_color(), i, j
+                    return True, another_robot.get_color(), i
                 i += 1
         # print(robot.get_color(), " is free to go")
         return False, None, None
@@ -100,10 +94,7 @@ class Menager:
             collision = self.check_if_robot_path_is_free(robot)
             if collision[0] and 0 < collision[2] < 3:
                 if self.get_robot_status(collision[1]) != "Halt":
-                    if collision[3] > collision[2]:
-                        self.halt_robot(collision[1])
-                    else:
-                        robot.set_status("Halt")
+                    robot.set_status("Halt")
             else:
                 if robot.get_status() == "Halt":
                     robot.set_status("Busy")
