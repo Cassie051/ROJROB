@@ -5,7 +5,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.main_window import UiRojRob
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-from random import randrange
 from system.menager import Menager
 
 matplotlib.use("Qt5Agg")
@@ -22,7 +21,7 @@ class Scene(QtWidgets.QMainWindow):
     def __init__(self):
         super(Scene, self).__init__()
         self.ui = UiRojRob()
-        self.menager = Menager(3)
+        self.menager = Menager()
         self.robots = self.menager.robots
         self.map = self.menager.map
         self.sc = MplCanvas(self, width=self.map.x, height=self.map.y, dpi=100)
@@ -43,6 +42,8 @@ class Scene(QtWidgets.QMainWindow):
             color = 'g'
         elif robot.get_status() == "Busy":
             color = 'r'
+        elif robot.get_status() == "Halt":
+            color = 'k'
         rob.set(color=robot.get_color())
         status_circle.set(color=color)
         self.sc.axes.add_artist(status_circle)
@@ -90,8 +91,10 @@ class Scene(QtWidgets.QMainWindow):
 
     def check_status(self):
         i = 0
+        self.menager.check_collisions()
         for robot in self.robots:
-            robot.make_step()
+            if robot.get_status() != "Halt":
+                robot.make_step()
             robot_path = robot.get_path()
             if len(robot_path) > 1:
                 self.plot_path(robot_path, robot.get_color() + "-")
@@ -99,12 +102,15 @@ class Scene(QtWidgets.QMainWindow):
                 self.menager.set_robot_status(i, "Free")
             self.plot_robot(robot)
             if robot.get_status() == "Free":
-                self.menager.set_robot_status(i, "Busy")
+                if(not self.menager.tasks.empty()):
+                    self.menager.set_robot_status(i, "Busy")
+                else:
+                    self.menager.set_robot_status(i, "Free")
             i += 1
         self.set_up_plot()
 
     def update_plot(self):
-        self.sc.axes.cla()  # Clear the canvas.
+        self.sc.axes.cla()
         self.plot_obstacles()
         self.check_status()
         self.sc.draw()
