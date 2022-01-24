@@ -91,6 +91,7 @@ class Scene(QtWidgets.QMainWindow):
 
     def check_status(self):
         i = 0
+        self.menager.check_collisions()
         for robot in self.robots:
             if robot.get_status() != "Halt":
                 robot.make_step()
@@ -101,12 +102,15 @@ class Scene(QtWidgets.QMainWindow):
                 self.menager.set_robot_status(i, "Free")
             self.plot_robot(robot)
             if robot.get_status() == "Free":
-                self.menager.set_robot_status(i, "Busy")
+                if(not self.menager.tasks.empty()):
+                    self.menager.set_robot_status(i, "Busy")
+                else:
+                    self.menager.set_robot_status(i, "Free")
             i += 1
         self.set_up_plot()
 
     def update_plot(self):
-        self.sc.axes.cla()  # Clear the canvas.
+        self.sc.axes.cla()
         self.plot_obstacles()
         self.check_status()
         self.sc.draw()

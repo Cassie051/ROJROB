@@ -15,6 +15,7 @@ class Menager:
         self.is_tasks_finish = []
         self.load_params("./config/scenario_1.json")
         self.generate_robots()
+        self.get_aims()
         self.init_robots()
         self.print_world_info()
 
@@ -25,6 +26,7 @@ class Menager:
         if not data["robot"]["rand"]:
             for tuple in data["robot"]["start_possition"]:
                 self.start_possition.append([tuple["x"], tuple["y"]])
+                self.is_tasks_finish.append(False)
         else:
             self.generate_start_possition()
         dimensions = data["map"]["dimensions"]
@@ -39,7 +41,6 @@ class Menager:
             self.tasks = Tasks()
             for tuple in data["tasks"]["move_to"]:
                 self.tasks.put([tuple["x"], tuple["y"]])
-        self.get_aims()
         self.is_loading_point = data["tasks"]["is_loading_point"]
         if self.is_loading_point:
             self.loading_possition = []
@@ -54,7 +55,6 @@ class Menager:
                 robot.set_color(colors[i])
             robot.find_path(self.aims[i], self.map)
             robot.set_status("Busy")
-            self.is_tasks_finish.append(False)
             i += 1
 
     def init_map(self):
@@ -73,6 +73,7 @@ class Menager:
 
     def get_aims(self):
         self.aims = []
+        i = 0
         while len(self.aims) < self.robot_number:
             if self.is_tasks_rand:
                 rand_x = random.randint(0, self.map_dimentions[0] - 1)
@@ -92,7 +93,12 @@ class Menager:
                 else:
                     self.aims.append([rand_x, rand_y])
             else:
-                self.aims.append(self.tasks.get())
+                if self.is_loading_point and not self.is_tasks_finish[i]:
+                    x, y = self.loading_possition[i]
+                    self.aims.append([x, y])
+                else:
+                    self.aims.append(self.tasks.get())
+            i += 1
 
     def get_single_aim(self, robot_number):
         if self.is_tasks_rand:
