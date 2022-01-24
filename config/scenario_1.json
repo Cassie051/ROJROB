@@ -1,7 +1,14 @@
 {
     "robot":
     {
-        "number": 3
+        "number": 3,
+        "rand": false,
+        "start_possition":
+        [
+            {"x": 1, "y": 1},
+            {"x": 1, "y": 2},
+            {"x": 1, "y": 3}
+        ]
     },
     "map":
     {
@@ -37,6 +44,7 @@
     },
     "tasks":
     {
+        "rand": false,
         "move_to":
         [
             {"x": 10, "y": 1},

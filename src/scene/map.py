@@ -34,10 +34,11 @@ class Map:
             self.grid[i] = rand
 
     def load_map(self, grid):
-        i=0
+        i = 0
         for line in grid:
             self.grid[i] = np.array(line)
             i += 1
+    
     def print_map(self):
         print(self.grid)
 

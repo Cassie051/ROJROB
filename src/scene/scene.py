@@ -22,7 +22,7 @@ class Scene(QtWidgets.QMainWindow):
     def __init__(self):
         super(Scene, self).__init__()
         self.ui = UiRojRob()
-        self.menager = Menager(3)
+        self.menager = Menager()
         self.robots = self.menager.robots
         self.map = self.menager.map
         self.sc = MplCanvas(self, width=self.map.x, height=self.map.y, dpi=100)
