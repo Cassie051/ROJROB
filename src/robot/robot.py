@@ -54,5 +54,3 @@ class Robot:
 
 if __name__ == "__main__":
     robot1 = Robot([1, 1])
-    robot1.find_path([5, 5])
-    robot1.print_path()

@@ -1,6 +1,7 @@
 import math
 import heapq
 import matplotlib.pyplot as plt
+from scene.map import Map
 
 
 class Node:
@@ -68,7 +69,7 @@ class Astar:
                 node_position = list((0, 0))
                 node_position[0], node_position[1] = current_node_x + new_position[0], current_node_y + new_position[1]
 
-                # TODO: check if node is reachable
+                # check if node is reachable
                 if 0 > node_position[0] or node_position[0] > occupancy_map.get_x_size()-1:
                     continue
                 if 0 > node_position[1] or node_position[1] > occupancy_map.get_y_size()-1:
@@ -104,7 +105,7 @@ def plan():
     n = 10
     start = 5, 4
     goal = 2, 3
-    result = Astar().solve(start, goal)
+    result = Astar().solve(start, goal, Map(n, n))
     if result:
         print(result)
         plt.axis([0, n, 0, n])
