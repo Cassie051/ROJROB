@@ -85,7 +85,7 @@ class Scene(QtWidgets.QMainWindow):
         self.setCentralWidget(self.sc)
 
     def set_up_timer(self):
-        self.timer.setInterval(100)
+        self.timer.setInterval(1000)
         self.timer.timeout.connect(self.update_plot)
         self.timer.start()
 
