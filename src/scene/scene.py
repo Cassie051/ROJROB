@@ -85,14 +85,22 @@ class Scene(QtWidgets.QMainWindow):
         self.setCentralWidget(self.sc)
 
     def set_up_timer(self):
-        self.timer.setInterval(1000)
+        self.timer.setInterval(100)
         self.timer.timeout.connect(self.update_plot)
         self.timer.start()
 
     def check_status(self):
         i = 0
         self.menager.check_collisions()
+        robots_pos = []
         for robot in self.robots:
+            robots_pos.append(robot.get_position())
+        for robot in self.robots:
+            robot_path = robot.get_path()
+            if len(robot_path) > 2:
+                next_step_point = robot_path[1]
+                if next_step_point in robots_pos:
+                    robot.set_status("Halt")
             if robot.get_status() != "Halt":
                 robot.make_step()
             robot_path = robot.get_path()

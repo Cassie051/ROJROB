@@ -6,6 +6,16 @@ from scene.map import Map
 from system.task import Tasks
 
 
+class Collision:
+    def __init__(self, status = False, color = None, i = None):
+        self.status = status
+        self.color = color
+        self.i = i
+
+    def __str__(self):
+        return str(self.status) + ", " + str(self.color) + ", " + str(self.i)
+
+
 class Menager:
     def __init__(self):
         self.robot_number = 0
@@ -13,7 +23,7 @@ class Menager:
         self.robots = []
         self.start_possition = []
         self.is_tasks_finish = []
-        self.load_params("./config/scenario_1.json")
+        self.load_params("G:/Mój dysk/Semestr 9/SZ/ROJROB_GitHub/config/scenario_1.json")
         self.generate_robots()
         self.get_aims()
         self.init_robots()
@@ -65,7 +75,7 @@ class Menager:
             rand_x = random.randint(0, self.map_dimentions[0] - 1)
             rand_y = random.randint(0, self.map_dimentions[1] - 1)
             if any(x == rand_x for (x, _) in self.start_possition) and any(
-                y == rand_y for (_, y) in self.start_possition
+                    y == rand_y for (_, y) in self.start_possition
             ):
                 pass
             else:
@@ -79,15 +89,15 @@ class Menager:
                 rand_x = random.randint(0, self.map_dimentions[0] - 1)
                 rand_y = random.randint(0, self.map_dimentions[1] - 1)
                 if any(x == rand_x for (x, _) in self.start_possition) and any(
-                    y == rand_y for (_, y) in self.start_possition
+                        y == rand_y for (_, y) in self.start_possition
                 ):
                     pass
                 elif any(x == rand_x for (x, _) in self.aims) and any(
-                    y == rand_y for (_, y) in self.aims
+                        y == rand_y for (_, y) in self.aims
                 ):
                     pass
                 elif any(x == rand_x for (x, _) in self.map.occupated_points()) and any(
-                    y == rand_y for (_, y) in self.map.occupated_points()
+                        y == rand_y for (_, y) in self.map.occupated_points()
                 ):
                     pass
                 else:
@@ -128,15 +138,17 @@ class Menager:
     def check_if_robot_path_is_free(self, robot):
         rest_of_robots = self.robots.copy()
         rest_of_robots.remove(robot)
+        tab_of_col = []
         for another_robot in rest_of_robots:
             robot_path = robot.get_path()
             another_robot_path = another_robot.get_path()
             i = 0
             for point in robot_path:
                 if point in another_robot_path:
-                    return True, another_robot.get_color(), i
+                    tab_of_col.append(Collision(True, another_robot.get_color(), i))
+                    break
                 i += 1
-        return False, None, None
+        return tab_of_col
 
     def halt_robot(self, color):
         for robot in self.robots:
@@ -145,10 +157,16 @@ class Menager:
 
     def check_collisions(self):
         for robot in self.robots:
-            collision = self.check_if_robot_path_is_free(robot)
-            if collision[0] and 0 < collision[2] < 3:
-                if self.get_robot_status(collision[1]) != "Halt":
-                    robot.set_status("Halt")
+            tab_collision = self.check_if_robot_path_is_free(robot)
+            if len(tab_collision) > 0:
+                for item in tab_collision:
+                    if item.status and 0 < item.i < 3:
+                        if self.get_robot_status(item.color) != "Halt":
+                            robot.set_status("Halt")
+                            break
+                    else:
+                        if robot.get_status() == "Halt":
+                            robot.set_status("Busy")
             else:
                 if robot.get_status() == "Halt":
                     robot.set_status("Busy")
