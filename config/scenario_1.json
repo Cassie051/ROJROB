@@ -57,6 +57,7 @@
             {"x": 17, "y": 1},
             {"x": 19, "y": 1}
         ],
+        "is_loading_point": true,
         "take_from":
         [
             {"x": 1, "y": 17},

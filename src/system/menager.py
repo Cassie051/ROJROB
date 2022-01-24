@@ -11,8 +11,8 @@ class Menager:
         self.map_dimentions = 0, 0
         self.robots = []
         self.start_possition = []
-        self.loading_possition = []
-        self.load_params('../config/scenario_1.json')
+        self.is_tasks_finish = []
+        self.load_params('./config/scenario_1.json')
         self.generate_robots()
         self.init_robots()
         self.print_world_info()
@@ -39,8 +39,11 @@ class Menager:
             for tuple in data["tasks"]["move_to"]:
                 self.tasks.put([tuple["x"], tuple["y"]])
         self.get_aims()
-        for tuple in data["tasks"]["take_from"]:
-            self.loading_possition([tuple["x"], tuple["y"]])
+        self.is_loading_point = data["tasks"]["is_loading_point"]
+        if(self.is_loading_point):
+            self.loading_possition = []
+            for tuple in data["tasks"]["take_from"]:
+                self.loading_possition.append([tuple["x"], tuple["y"]])
         
     def init_robots(self):
         i = 0
@@ -50,6 +53,7 @@ class Menager:
                 robot.set_color(colors[i])
             robot.find_path(self.aims[i], self.map)
             robot.set_status("Busy")
+            self.is_tasks_finish.append(False)
             i += 1
 
     def init_map(self):
@@ -95,7 +99,12 @@ class Menager:
             self.aims[robot_number] = [rand_x, rand_y]
             return rand_x, rand_y
         else:
-            x, y = self.tasks.get()
+            if self.is_loading_point and not self.is_tasks_finish[robot_number]:
+                x, y = self.loading_possition[robot_number]
+                self.is_tasks_finish[robot_number] = True
+            else:
+                x, y = self.tasks.get()
+                self.is_tasks_finish[robot_number] = False
             self.aims[robot_number] = [x, y]
             return x, y
 
