@@ -60,20 +60,20 @@ class Scene(QtWidgets.QMainWindow):
             rec.set(fill=True)
             self.sc.axes.add_artist(rec)
 
-    def plot_path(self, path, color="r-"):
+    def plot_path(self, path, colour="red"):
         x = []
         y = []
         for point in path:
             x.append(point[0] + 0.5)
             y.append(point[1] + 0.5)
-        self.sc.axes.plot(x, y, color)
+        self.sc.axes.plot(x, y, color=colour, ls='-')
 
     def plot(self):
         self.plot_obstacles()
         for robot in self.robots:
             self.plot_robot(robot)
             if len(robot.get_path()) > 1:
-                self.plot_path(robot.get_path(), robot.get_color() + "-")
+                self.plot_path(robot.get_path(), robot.get_color())
 
     def set_up_plot(self):
         major_ticks = np.arange(0, self.map.x+1, 1)
@@ -105,7 +105,7 @@ class Scene(QtWidgets.QMainWindow):
                 robot.make_step()
             robot_path = robot.get_path()
             if len(robot_path) > 1:
-                self.plot_path(robot_path, robot.get_color() + "-")
+                self.plot_path(robot_path, robot.get_color())
             elif len(robot_path) < 2:
                 self.menager.set_robot_status(i, "Free")
             self.plot_robot(robot)

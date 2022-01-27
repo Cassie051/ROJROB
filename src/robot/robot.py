@@ -4,7 +4,7 @@ from robot.astar import Astar
 class Robot:
     """Klasa modelujaca robota"""
 
-    def __init__(self, position=None, color='b'):
+    def __init__(self, position=None, color='blue'):
         if position:
             self.position = position
         else:

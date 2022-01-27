@@ -59,7 +59,7 @@ class Menager:
 
     def init_robots(self):
         i = 0
-        colors = ["m", "y", "g", "r"]
+        colors = ["magenta", "yellow", "lime", "darkred", "cyan", "royalblue", "silver", "darkorange"]
         for robot in self.robots:
             if i < len(colors):
                 robot.set_color(colors[i])
